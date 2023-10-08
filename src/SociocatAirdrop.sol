@@ -7,6 +7,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 
 error SociocatAirdrop_InvalidProof();
 error SociocatAirdrop_AlreadyClaimed();
+error SociocatAirdrop_InvalidParams();
 
 contract SociocatAirdrop is ReentrancyGuard {
     IERC20 public token;
@@ -16,6 +17,10 @@ contract SociocatAirdrop is ReentrancyGuard {
     event Claimed(address indexed receiver, uint256 amount);
 
     constructor(IERC20 _token, bytes32 _root) {
+        if (address(_token) == address(0) || _root == 0) {
+            revert SociocatAirdrop_InvalidParams();
+        }
+
         token = _token;
         root = _root;
     }
