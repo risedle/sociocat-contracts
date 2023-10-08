@@ -3,10 +3,11 @@ pragma solidity ^0.8.21;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 error SociocatAirdrop_InvalidProof();
 
-contract SociocatAirdrop {
+contract SociocatAirdrop is ReentrancyGuard {
     IERC20 public token;
     bytes32 public root;
 
@@ -17,7 +18,10 @@ contract SociocatAirdrop {
         root = _root;
     }
 
-    function claim(uint256 amount, bytes32[] calldata proof) external {
+    function claim(
+        uint256 amount,
+        bytes32[] calldata proof
+    ) external nonReentrant {
         bytes32 leaf = keccak256(
             bytes.concat(keccak256(abi.encode(msg.sender, amount)))
         );
