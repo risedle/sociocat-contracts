@@ -34,7 +34,7 @@ contract SocioCatAirdropTest is Test {
    */
 
   function test_rejectsInvalidProof() public {
-    vm.expectRevert(SociocatAirdrop_InvalidProof.selector);
+    vm.expectRevert(SocioCatAirdrop.InvalidProof.selector);
     airdrop.claim(1, new bytes32[](0));
   }
 
@@ -67,7 +67,7 @@ contract SocioCatAirdropTest is Test {
     airdrop.claim(1 ether, proof);
 
     // Second claim
-    vm.expectRevert(SociocatAirdrop_AlreadyClaimed.selector);
+    vm.expectRevert(SocioCatAirdrop.AlreadyClaimed.selector);
     vm.prank(vitalik);
     airdrop.claim(1 ether, proof);
   }

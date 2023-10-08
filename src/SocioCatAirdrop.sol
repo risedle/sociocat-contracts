@@ -7,16 +7,16 @@ import {MerkleProof} from
 import {ReentrancyGuard} from
   "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-error SociocatAirdrop_InvalidProof();
-error SociocatAirdrop_AlreadyClaimed();
-error SociocatAirdrop_InvalidParams();
-
 contract SocioCatAirdrop is ReentrancyGuard {
   IERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;
 
   event Claimed(address indexed receiver, uint256 amount);
+
+  error InvalidProof();
+  error AlreadyClaimed();
+  error InvalidParams();
 
   constructor(IERC20 _token, bytes32 _root) {
     token = _token;
@@ -30,10 +30,10 @@ contract SocioCatAirdrop is ReentrancyGuard {
     bytes32 leaf =
       keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
     if (!MerkleProof.verify(proof, root, leaf)) {
-      revert SociocatAirdrop_InvalidProof();
+      revert InvalidProof();
     }
     if (claimed[msg.sender]) {
-      revert SociocatAirdrop_AlreadyClaimed();
+      revert AlreadyClaimed();
     }
 
     claimed[msg.sender] = true;
