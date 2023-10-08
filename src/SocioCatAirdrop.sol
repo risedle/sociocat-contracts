@@ -11,7 +11,7 @@ error SociocatAirdrop_InvalidProof();
 error SociocatAirdrop_AlreadyClaimed();
 error SociocatAirdrop_InvalidParams();
 
-contract SociocatAirdrop is ReentrancyGuard {
+contract SocioCatAirdrop is ReentrancyGuard {
   IERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;

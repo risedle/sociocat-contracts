@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "../src/SociocatAirdrop.sol";
+import "../src/SocioCatAirdrop.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "forge-std/Test.sol";
 
@@ -19,7 +19,7 @@ import "forge-std/Test.sol";
 bytes32 constant root =
   0xdd9d071d0ae3c1e1e55dd4865b8a6d3f72f08af272fe0831fa6ead525d6ad710;
 
-contract SociocatAirdropTest is Test {
+contract SocioCatAirdropTest is Test {
   SociocatAirdrop airdrop;
   TestToken token;
 
