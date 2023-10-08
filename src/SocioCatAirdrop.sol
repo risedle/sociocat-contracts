@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.17;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from
+  "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MerkleProof} from
   "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {ReentrancyGuard} from
   "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract SocioCatAirdrop is ReentrancyGuard {
-  IERC20 public token;
+  SafeERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;
 
@@ -18,7 +19,7 @@ contract SocioCatAirdrop is ReentrancyGuard {
   error AlreadyClaimed();
   error InvalidParams();
 
-  constructor(IERC20 _token, bytes32 _root) {
+  constructor(SafeERC20 _token, bytes32 _root) {
     token = _token;
     root = _root;
   }
