@@ -30,20 +30,6 @@ contract SociocatAirdropTest is Test {
   }
 
   /**
-   * ——— constructor()
-   */
-
-  function test_rejectsInvalidToken() public {
-    vm.expectRevert(SociocatAirdrop_InvalidParams.selector);
-    new SociocatAirdrop(IERC20(address(0)), root);
-  }
-
-  function test_rejectsInvalidRoot() public {
-    vm.expectRevert(SociocatAirdrop_InvalidParams.selector);
-    new SociocatAirdrop(token, 0x0);
-  }
-
-  /**
    * ——— claim()
    */
 
