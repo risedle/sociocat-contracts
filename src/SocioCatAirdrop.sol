@@ -1,15 +1,16 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.17;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
 
-import {SafeERC20} from
-  "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {MerkleProof} from
-  "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import {ReentrancyGuard} from
-  "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract SocioCatAirdrop is ReentrancyGuard {
-  SafeERC20 public token;
+contract SocioCatAirdrop is Ownable, ReentrancyGuard {
+  using SafeERC20 for ERC20;
+
+  ERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;
 
@@ -17,19 +18,18 @@ contract SocioCatAirdrop is ReentrancyGuard {
 
   error InvalidProof();
   error AlreadyClaimed();
-  error InvalidParams();
 
-  constructor(SafeERC20 _token, bytes32 _root) {
+  constructor(address _owner, ERC20 _token, bytes32 _root) Ownable(_owner) {
     token = _token;
     root = _root;
   }
 
-  function claim(uint256 amount, bytes32[] calldata proof)
-    external
-    nonReentrant
-  {
-    bytes32 leaf =
-      keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
+  function setRoot(bytes32 _root) external onlyOwner {
+    root = _root;
+  }
+
+  function claim(uint256 amount, bytes32[] calldata proof) external nonReentrant {
+    bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
     if (!MerkleProof.verify(proof, root, leaf)) {
       revert InvalidProof();
     }
@@ -38,7 +38,7 @@ contract SocioCatAirdrop is ReentrancyGuard {
     }
 
     claimed[msg.sender] = true;
-    token.transfer(msg.sender, amount);
+    token.safeTransfer(msg.sender, amount);
     emit Claimed(msg.sender, amount);
   }
 }

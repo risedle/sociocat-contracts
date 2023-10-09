@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.17;
+pragma solidity ^0.8.20;
 
 import "../src/SocioCatAirdrop.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -20,12 +20,14 @@ bytes32 constant root =
   0xdd9d071d0ae3c1e1e55dd4865b8a6d3f72f08af272fe0831fa6ead525d6ad710;
 
 contract SocioCatAirdropTest is Test {
-  SociocatAirdrop airdrop;
+  SocioCatAirdrop airdrop;
   TestToken token;
+
+  address owner = vm.addr(0xBA5ED);
 
   function setUp() public {
     token = new TestToken();
-    airdrop = new SociocatAirdrop(token, root);
+    airdrop = new SocioCatAirdrop(owner, token, root);
     token.mint(address(airdrop), 3 ether);
   }
 
@@ -41,10 +43,8 @@ contract SocioCatAirdropTest is Test {
   function test_claims() public {
     address vitalik = 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045;
     bytes32[] memory proof = new bytes32[](2);
-    proof[0] =
-      0xb7790ece4442bbc8f93fc4b7b6aa37bb39d2971048f98e64a3190c76c82e2381;
-    proof[1] =
-      0xebecbbb383635879d8415e0628c3d0b82dcee85319864be9aead45d0d120f5cb;
+    proof[0] = 0xb7790ece4442bbc8f93fc4b7b6aa37bb39d2971048f98e64a3190c76c82e2381;
+    proof[1] = 0xebecbbb383635879d8415e0628c3d0b82dcee85319864be9aead45d0d120f5cb;
 
     assertEq(token.balanceOf(vitalik), 0); // Check initial balance
 
@@ -57,10 +57,8 @@ contract SocioCatAirdropTest is Test {
   function test_rejectsDoubleClaim() public {
     address vitalik = 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045;
     bytes32[] memory proof = new bytes32[](2);
-    proof[0] =
-      0xb7790ece4442bbc8f93fc4b7b6aa37bb39d2971048f98e64a3190c76c82e2381;
-    proof[1] =
-      0xebecbbb383635879d8415e0628c3d0b82dcee85319864be9aead45d0d120f5cb;
+    proof[0] = 0xb7790ece4442bbc8f93fc4b7b6aa37bb39d2971048f98e64a3190c76c82e2381;
+    proof[1] = 0xebecbbb383635879d8415e0628c3d0b82dcee85319864be9aead45d0d120f5cb;
 
     // First claim
     vm.prank(vitalik);
