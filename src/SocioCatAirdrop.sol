@@ -7,7 +7,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract SocioCatAirdrop is Ownable, ReentrancyGuard {
+contract SocioCatAirdrop is ReentrancyGuard {
   using SafeERC20 for ERC20;
 
   ERC20 public token;
@@ -19,12 +19,8 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   error InvalidProof();
   error AlreadyClaimed();
 
-  constructor(address _owner, ERC20 _token, bytes32 _root) Ownable(_owner) {
+  constructor(ERC20 _token, bytes32 _root) {
     token = _token;
-    root = _root;
-  }
-
-  function setRoot(bytes32 _root) external onlyOwner {
     root = _root;
   }
 

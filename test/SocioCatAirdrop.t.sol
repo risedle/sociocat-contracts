@@ -23,11 +23,9 @@ contract SocioCatAirdropTest is Test {
   SocioCatAirdrop airdrop;
   TestToken token;
 
-  address owner = vm.addr(0xBA5ED);
-
   function setUp() public {
     token = new TestToken();
-    airdrop = new SocioCatAirdrop(owner, token, root);
+    airdrop = new SocioCatAirdrop(token, root);
     token.mint(address(airdrop), 3 ether);
   }
 
