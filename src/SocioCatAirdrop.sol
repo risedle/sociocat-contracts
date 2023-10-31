@@ -10,7 +10,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   using SafeERC20 for ERC20;
 
-  ERC20 public token;
+  ERC20 public immutable token;
   bytes32 public root;
   mapping(address => bool) public claimed;
 
