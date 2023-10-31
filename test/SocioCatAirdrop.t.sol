@@ -71,6 +71,20 @@ contract SocioCatAirdropTest is Test {
     vm.prank(vitalik);
     airdrop.claim(1 ether, proof);
   }
+  
+  function test_rejectsClaimEnd() public {
+    address vitalik = 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045;
+    bytes32[] memory proof = new bytes32[](2);
+    proof[0] = 0xb7790ece4442bbc8f93fc4b7b6aa37bb39d2971048f98e64a3190c76c82e2381;
+    proof[1] = 0xebecbbb383635879d8415e0628c3d0b82dcee85319864be9aead45d0d120f5cb;
+
+    vm.warp(claimEndTime);
+
+    // First claim
+    vm.prank(vitalik);
+    vm.expectRevert(SocioCatAirdrop.ClaimEnded.selector);
+    airdrop.claim(1 ether, proof);
+  }
 
   /**
    * ——— recover()

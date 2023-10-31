@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity 0.8.20;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -11,10 +11,10 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   using SafeERC20 for ERC20;
 
   ERC20 public immutable token;
-  bytes32 public root;
-  mapping(address => bool) public claimed;
   address public immutable treasury;
   uint256 public immutable claimEndTime;
+  bytes32 public root;
+  mapping(address => bool) public claimed;
 
   event Claimed(address indexed receiver, uint256 amount);
   event Recovered(address indexed receiver, uint256 amount);
@@ -22,6 +22,7 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   error InvalidProof();
   error AlreadyClaimed();
   error HasNotEnded();
+  error ClaimEnded();
 
   constructor(
     address owner,
@@ -41,6 +42,10 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   }
 
   function claim(uint256 amount, bytes32[] calldata proof) external nonReentrant {
+    if(block.timestamp >= claimEndTime) {
+      revert ClaimEnded();
+    }
+
     bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
     if (!MerkleProof.verify(proof, root, leaf)) {
       revert InvalidProof();
