@@ -23,12 +23,13 @@ contract SocioCatAirdropTest is Test {
   SocioCatAirdrop airdrop;
   TestToken token;
 
+  address owner = vm.addr(0x123);
   address treasury = vm.addr(0xBA5ED);
   uint256 claimEndTime = block.timestamp + 1_000_000;
 
   function setUp() public {
     token = new TestToken();
-    airdrop = new SocioCatAirdrop(token, root, treasury, claimEndTime);
+    airdrop = new SocioCatAirdrop(owner, token, root, treasury, claimEndTime);
     token.mint(address(airdrop), 3 ether);
   }
 

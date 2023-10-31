@@ -18,6 +18,7 @@ contract DeployTestAirdrop is Script {
 
     token = new SocioCatToken(treasury, "Test Airdrop", "TEST");
     airdrop = new SocioCatAirdrop(
+      owner,
       token,
       0xdd9d071d0ae3c1e1e55dd4865b8a6d3f72f08af272fe0831fa6ead525d6ad710,
       treasury,
