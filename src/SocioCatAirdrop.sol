@@ -13,15 +13,27 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
   ERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;
+  address public immutable treasury;
+  uint256 public immutable claimEndTime;
 
   event Claimed(address indexed receiver, uint256 amount);
+  event Recovered(address indexed receiver, uint256 amount);
 
   error InvalidProof();
   error AlreadyClaimed();
+  error HasNotEnded();
 
-  constructor(address _owner, ERC20 _token, bytes32 _root) Ownable(_owner) {
+  constructor(
+    address owner,
+    ERC20 _token,
+    bytes32 _root,
+    address _treasury,
+    uint256 _claimEndTime
+  ) Ownable(owner) {
     token = _token;
     root = _root;
+    treasury = _treasury;
+    claimEndTime = _claimEndTime;
   }
 
   function setRoot(bytes32 _root) external onlyOwner {
@@ -40,5 +52,15 @@ contract SocioCatAirdrop is Ownable, ReentrancyGuard {
     claimed[msg.sender] = true;
     token.safeTransfer(msg.sender, amount);
     emit Claimed(msg.sender, amount);
+  }
+
+  function recover() external {
+    if (block.timestamp < claimEndTime) {
+      revert HasNotEnded();
+    }
+
+    uint256 balance = token.balanceOf(address(this));
+    token.safeTransfer(treasury, balance);
+    emit Recovered(treasury, balance);
   }
 }

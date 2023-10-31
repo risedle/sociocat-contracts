@@ -23,11 +23,13 @@ contract SocioCatAirdropTest is Test {
   SocioCatAirdrop airdrop;
   TestToken token;
 
-  address owner = vm.addr(0xBA5ED);
+  address owner = vm.addr(0x123);
+  address treasury = vm.addr(0xBA5ED);
+  uint256 claimEndTime = block.timestamp + 1_000_000;
 
   function setUp() public {
     token = new TestToken();
-    airdrop = new SocioCatAirdrop(owner, token, root);
+    airdrop = new SocioCatAirdrop(owner, token, root, treasury, claimEndTime);
     token.mint(address(airdrop), 3 ether);
   }
 
@@ -68,6 +70,32 @@ contract SocioCatAirdropTest is Test {
     vm.expectRevert(SocioCatAirdrop.AlreadyClaimed.selector);
     vm.prank(vitalik);
     airdrop.claim(1 ether, proof);
+  }
+
+  /**
+   * ——— recover()
+   */
+
+  function test_rejectsRecoverBeforeTime() public {
+    vm.warp(claimEndTime - 1);
+
+    vm.expectRevert(SocioCatAirdrop.HasNotEnded.selector);
+    airdrop.recover();
+  }
+
+  function test_recoversAllUnclaimedToken() public {
+    vm.warp(claimEndTime);
+
+    // Check initial balance
+    uint256 unclaimed = token.balanceOf(address(airdrop));
+    assertEq(token.balanceOf(treasury), 0);
+
+    // Recover
+    airdrop.recover();
+
+    // Should transfer token
+    assertEq(token.balanceOf(address(airdrop)), 0);
+    assertEq(token.balanceOf(treasury), unclaimed);
   }
 }
 
