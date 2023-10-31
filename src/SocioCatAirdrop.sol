@@ -17,9 +17,11 @@ contract SocioCatAirdrop is ReentrancyGuard {
   uint256 public immutable claimEndTime;
 
   event Claimed(address indexed receiver, uint256 amount);
+  event Recovered(address indexed receiver, uint256 amount);
 
   error InvalidProof();
   error AlreadyClaimed();
+  error HasNotEnded();
 
   constructor(ERC20 _token, bytes32 _root, address _treasury, uint256 _claimEndTime) {
     token = _token;
@@ -40,5 +42,15 @@ contract SocioCatAirdrop is ReentrancyGuard {
     claimed[msg.sender] = true;
     token.safeTransfer(msg.sender, amount);
     emit Claimed(msg.sender, amount);
+  }
+
+  function recover() external {
+    if (block.timestamp < claimEndTime) {
+      revert HasNotEnded();
+    }
+
+    uint256 balance = token.balanceOf(address(this));
+    token.safeTransfer(treasury, balance);
+    emit Recovered(treasury, balance);
   }
 }
