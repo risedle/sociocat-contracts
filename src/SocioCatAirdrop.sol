@@ -13,15 +13,19 @@ contract SocioCatAirdrop is ReentrancyGuard {
   ERC20 public token;
   bytes32 public root;
   mapping(address => bool) public claimed;
+  address public immutable treasury;
+  uint256 public immutable claimEndTime;
 
   event Claimed(address indexed receiver, uint256 amount);
 
   error InvalidProof();
   error AlreadyClaimed();
 
-  constructor(ERC20 _token, bytes32 _root) {
+  constructor(ERC20 _token, bytes32 _root, address _treasury, uint256 _claimEndTime) {
     token = _token;
     root = _root;
+    treasury = _treasury;
+    claimEndTime = _claimEndTime;
   }
 
   function claim(uint256 amount, bytes32[] calldata proof) external nonReentrant {
